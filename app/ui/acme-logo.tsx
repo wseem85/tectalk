@@ -1,13 +1,15 @@
-import { GlobeAltIcon } from '@heroicons/react/24/outline';
-import { lusitana } from '@/app/ui/fonts';
+import { ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
+import { lato } from '@/app/ui/font';
 
 export default function AcmeLogo() {
   return (
     <div
-      className={`${lusitana.className} flex flex-row items-center leading-none text-white`}
+      className={`${lato.className} flex flex-row items-center leading-none text-white`}
     >
-      <GlobeAltIcon className="h-12 w-12 rotate-[15deg]" />
-      <p className="text-[44px]">Acme</p>
+      <p className="text-[44px]">
+        <span>T</span>ec.<span>T</span>alk
+      </p>
+      <ChatBubbleLeftRightIcon className="h-12 w-12 text-lg " />
     </div>
   );
 }

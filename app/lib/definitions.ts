@@ -15,7 +15,11 @@ export type Customer = {
   email: string;
   image_url: string;
 };
-
+export type topic = {
+  id: string;
+  title: string;
+  created_at: date;
+};
 export type Invoice = {
   id: string;
   customer_id: string;
