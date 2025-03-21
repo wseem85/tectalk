@@ -18,7 +18,14 @@ export type Customer = {
 export type topic = {
   id: string;
   title: string;
-  created_at: date;
+  posts: string[];
+  created_at: string;
+};
+export type post = {
+  id: string;
+  title: string;
+  topic: string;
+  created_at: string;
 };
 export type Invoice = {
   id: string;
