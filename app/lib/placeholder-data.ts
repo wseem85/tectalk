@@ -1,147 +1,75 @@
 // This file contains placeholder data that you'll be replacing with real data in the Data Fetching chapter:
 // https://nextjs.org/learn/dashboard-app/fetching-data
+// lib/placeholder-data.ts
 const users = [
   {
     id: '410544b2-4001-4271-9855-fec4b6a6442a',
-    name: 'User',
-    email: 'user@nextmail.com',
+    name: 'John Doe',
+    email: 'john@example.com',
+    password: '123456',
+  },
+  {
+    id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
+    name: 'Jane Smith',
+    email: 'jane@example.com',
     password: '123456',
   },
 ];
 
-const customers = [
+const topics = [
   {
-    id: 'd6e15727-9fe1-4961-8c5b-ea44a9bd81aa',
-    name: 'Evil Rabbit',
-    email: 'evil@rabbit.com',
-    image_url: '/customers/evil-rabbit.png',
+    id: '5c13964a-410d-4b7e-8275-fec4b6a6442a',
+    title: 'community',
+    description: 'Introduction to the community and basic guidelines',
+    user_id: users[0].id, // Created by John Doe
   },
   {
-    id: '3958dc9e-712f-4377-85e9-fec4b6a6442a',
-    name: 'Delba de Oliveira',
-    email: 'delba@oliveira.com',
-    image_url: '/customers/delba-de-oliveira.png',
-  },
-  {
-    id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
-    name: 'Lee Robinson',
-    email: 'lee@robinson.com',
-    image_url: '/customers/lee-robinson.png',
-  },
-  {
-    id: '76d65c26-f784-44a2-ac19-586678f7c2f2',
-    name: 'Michael Novotny',
-    email: 'michael@novotny.com',
-    image_url: '/customers/michael-novotny.png',
-  },
-  {
-    id: 'CC27C14A-0ACF-4F4A-A6C9-D45682C144B9',
-    name: 'Amy Burns',
-    email: 'amy@burns.com',
-    image_url: '/customers/amy-burns.png',
-  },
-  {
-    id: '13D07535-C59E-4157-A011-F8D2EF4E0CBB',
-    name: 'Balazs Orban',
-    email: 'balazs@orban.com',
-    image_url: '/customers/balazs-orban.png',
+    id: '6d2a1870-743d-4a7b-9173-fec4b6a6442a',
+    title: 'general',
+    description: 'Open forum for various topics',
+    user_id: users[1].id, // Created by Jane Smith
   },
 ];
 
-const invoices = [
+const posts = [
   {
-    customer_id: customers[0].id,
-    amount: 15795,
-    status: 'pending',
-    date: '2022-12-06',
+    id: '7f4a8b9c-3d2e-4f5a-a6b7-fec4b6a6442a',
+    title: 'Welcome to Our Community!',
+    text: 'This is the first post welcoming everyone to our platform...',
+    user_id: users[0].id, // Posted by John Doe
+    topic_id: topics[0].id, // Belongs to "Getting Started" topic
   },
   {
-    customer_id: customers[1].id,
-    amount: 20348,
-    status: 'pending',
-    date: '2022-11-14',
-  },
-  {
-    customer_id: customers[4].id,
-    amount: 3040,
-    status: 'paid',
-    date: '2022-10-29',
-  },
-  {
-    customer_id: customers[3].id,
-    amount: 44800,
-    status: 'paid',
-    date: '2023-09-10',
-  },
-  {
-    customer_id: customers[5].id,
-    amount: 34577,
-    status: 'pending',
-    date: '2023-08-05',
-  },
-  {
-    customer_id: customers[2].id,
-    amount: 54246,
-    status: 'pending',
-    date: '2023-07-16',
-  },
-  {
-    customer_id: customers[0].id,
-    amount: 666,
-    status: 'pending',
-    date: '2023-06-27',
-  },
-  {
-    customer_id: customers[3].id,
-    amount: 32545,
-    status: 'paid',
-    date: '2023-06-09',
-  },
-  {
-    customer_id: customers[4].id,
-    amount: 1250,
-    status: 'paid',
-    date: '2023-06-17',
-  },
-  {
-    customer_id: customers[5].id,
-    amount: 8546,
-    status: 'paid',
-    date: '2023-06-07',
-  },
-  {
-    customer_id: customers[1].id,
-    amount: 500,
-    status: 'paid',
-    date: '2023-08-19',
-  },
-  {
-    customer_id: customers[5].id,
-    amount: 8945,
-    status: 'paid',
-    date: '2023-06-03',
-  },
-  {
-    customer_id: customers[2].id,
-    amount: 1000,
-    status: 'paid',
-    date: '2022-06-05',
+    id: '8e5b9a8c-4f3e-4a7b-9d2c-fec4b6a6442a',
+    title: 'Favorite Programming Languages',
+    text: "Let's discuss our favorite programming languages and why...",
+    user_id: users[1].id, // Posted by Jane Smith
+    topic_id: topics[1].id, // Belongs to "General Discussion" topic
   },
 ];
 
-const revenue = [
-  { month: 'Jan', revenue: 2000 },
-  { month: 'Feb', revenue: 1800 },
-  { month: 'Mar', revenue: 2200 },
-  { month: 'Apr', revenue: 2500 },
-  { month: 'May', revenue: 2300 },
-  { month: 'Jun', revenue: 3200 },
-  { month: 'Jul', revenue: 3500 },
-  { month: 'Aug', revenue: 3700 },
-  { month: 'Sep', revenue: 2500 },
-  { month: 'Oct', revenue: 2800 },
-  { month: 'Nov', revenue: 3000 },
-  { month: 'Dec', revenue: 4800 },
+const comments = [
+  {
+    id: '9f6c8b7a-5d4e-4f3a-a2b1-fec4b6a6442a',
+    text: 'Thanks for the warm welcome! Excited to be here.',
+    user_id: users[1].id, // Comment by Jane Smith
+    post_id: posts[0].id, // On the welcome post
+    parent_id: null,
+  },
+  {
+    id: '1a2b3c4d-5e6f-7a8b-9c0d-fec4b6a6442a',
+    text: 'I love TypeScript for its type safety!',
+    user_id: users[0].id, // Comment by John Doe
+    post_id: posts[1].id, // On the programming languages post
+    parent_id: null,
+  },
+  {
+    id: '2b3c4d5e-6f7a-8b9c-0d1e-fec4b6a6442a',
+    text: 'Python is great for quick prototyping!',
+    user_id: users[1].id, // Comment by Jane Smith
+    post_id: posts[0].id, // On the programming languages post
+    parent_id: null,
+  },
 ];
 
-export { users, customers, invoices, revenue };
+export { users, topics, posts, comments };

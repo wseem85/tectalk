@@ -1,18 +1,28 @@
 import bcrypt from 'bcryptjs';
 import postgres from 'postgres';
-import { invoices, customers, revenue, users } from '../lib/placeholder-data';
+import { users, topics, posts, comments } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
+async function clearDatabase() {
+  // Drop tables in reverse order of creation to respect foreign keys
+  await sql`DROP TABLE IF EXISTS comments CASCADE`;
+  await sql`DROP TABLE IF EXISTS posts CASCADE`;
+  await sql`DROP TABLE IF EXISTS topics CASCADE`;
+  await sql`DROP TABLE IF EXISTS users CASCADE`;
+  console.log('Database cleared');
+}
 async function seedUsers() {
   await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
+
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
       email TEXT NOT NULL UNIQUE,
-      password TEXT NOT NULL
+      password TEXT NOT NULL,
+      avatar VARCHAR(255)
     );
+
   `;
 
   const insertedUsers = await Promise.all(
@@ -25,92 +35,101 @@ async function seedUsers() {
       `;
     })
   );
-
+  console.log('Users are inserted');
   return insertedUsers;
 }
 
-async function seedInvoices() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
+async function seedTopics() {
   await sql`
-    CREATE TABLE IF NOT EXISTS invoices (
+    CREATE TABLE IF NOT EXISTS topics (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      customer_id UUID NOT NULL,
-      amount INT NOT NULL,
-      status VARCHAR(255) NOT NULL,
-      date DATE NOT NULL
+      title VARCHAR(255)  NOT NULL UNIQUE,
+      description TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE
     );
   `;
 
-  const insertedInvoices = await Promise.all(
-    invoices.map(
-      (invoice) => sql`
-        INSERT INTO invoices (customer_id, amount, status, date)
-        VALUES (${invoice.customer_id}, ${invoice.amount}, ${invoice.status}, ${invoice.date})
+  const insertedTopics = await Promise.all(
+    topics.map(
+      (topic) =>
+        sql`
+        INSERT INTO topics (id, title, description, user_id)
+        VALUES (${topic.id}, ${topic.title}, ${topic.description}, ${topic.user_id})
+        ON CONFLICT (id) DO NOTHING;
+      `
+    )
+  );
+  console.log('Topics are inserted');
+  return insertedTopics;
+}
+
+async function seedPosts() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS posts (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      title VARCHAR(255) NOT NULL UNIQUE,
+      text TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      topic_id UUID NOT NULL REFERENCES topics(id) ON DELETE CASCADE
+    );
+     `;
+
+  const insertedPosts = await Promise.all(
+    posts.map(
+      (post) =>
+        sql`
+        INSERT INTO posts (id, title, text, user_id, topic_id)
+        VALUES (${post.id}, ${post.title}, ${post.text}, ${post.user_id}, ${post.topic_id})
+        ON CONFLICT (id) DO NOTHING;
+      `
+    )
+  );
+  console.log('Posts are inserted');
+  return insertedPosts;
+}
+
+async function seedComments() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS comments (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      text TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT NOW() NOT NULL,
+      user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+      post_id UUID NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
+      parent_id UUID  REFERENCES comments(id) ON DELETE CASCADE
+    );
+
+  `;
+
+  const insertedComments = await Promise.all(
+    comments.map(
+      (comment) =>
+        sql`
+        INSERT INTO comments (id, text, user_id, post_id,parent_id)
+        VALUES (${comment.id}, ${comment.text}, ${comment.user_id}, ${comment.post_id},${comment.parent_id})
         ON CONFLICT (id) DO NOTHING;
       `
     )
   );
 
-  return insertedInvoices;
-}
-
-async function seedCustomers() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
-  await sql`
-    CREATE TABLE IF NOT EXISTS customers (
-      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-      name VARCHAR(255) NOT NULL,
-      email VARCHAR(255) NOT NULL,
-      image_url VARCHAR(255) NOT NULL
-    );
-  `;
-
-  const insertedCustomers = await Promise.all(
-    customers.map(
-      (customer) => sql`
-        INSERT INTO customers (id, name, email, image_url)
-        VALUES (${customer.id}, ${customer.name}, ${customer.email}, ${customer.image_url})
-        ON CONFLICT (id) DO NOTHING;
-      `
-    )
-  );
-
-  return insertedCustomers;
-}
-
-async function seedRevenue() {
-  await sql`
-    CREATE TABLE IF NOT EXISTS revenue (
-      month VARCHAR(4) NOT NULL UNIQUE,
-      revenue INT NOT NULL
-    );
-  `;
-
-  const insertedRevenue = await Promise.all(
-    revenue.map(
-      (rev) => sql`
-        INSERT INTO revenue (month, revenue)
-        VALUES (${rev.month}, ${rev.revenue})
-        ON CONFLICT (month) DO NOTHING;
-      `
-    )
-  );
-
-  return insertedRevenue;
+  return insertedComments;
 }
 
 export async function GET() {
   try {
-    const result = await sql.begin((sql) => [
-      seedUsers(),
-      seedCustomers(),
-      seedInvoices(),
-      seedRevenue(),
-    ]);
+    const result = await sql.begin(async (sql) => {
+      await clearDatabase();
+      await seedUsers();
+      await seedTopics();
+      await seedPosts();
+      await seedComments();
+      // return [seedUsers(), seedTopics(), seedPosts(), seedComments()];
+      return true;
+    });
 
-    return Response.json({ message: 'Database seeded successfully' });
+    return Response.json({ message: 'Database reset and seeded successfully' });
   } catch (error) {
     return Response.json({ error }, { status: 500 });
   }

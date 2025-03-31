@@ -1,218 +1,136 @@
 import postgres from 'postgres';
 import {
-  CustomerField,
-  CustomersTableType,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
-  Revenue,
+  User,
+  Topic,
+  Post,
+  Comment,
+  TopicWithPosts,
+  PostWithRelations,
+  CommentWithUser,
+  PostWithUserName,
 } from './definitions';
 import { formatCurrency } from './utils';
+import { auth } from '@/auth';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-export async function fetchRevenue() {
+export async function fetchTopics(query: string) {
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue[]>`SELECT * FROM revenue`;
+    let data;
+    if (!query) {
+      data = await sql<Topic[]>`SELECT * FROM topics`;
+    }
+    if (query) {
+      const searchTerm = `%${query.toLowerCase().trim()}%`;
+      data = await sql<
+        Topic[]
+      >`SELECT * FROM topics WHERE LOWER(TRIM(title)) ILIKE ${searchTerm}`;
+    }
 
     // console.log('Data fetch completed after 3 seconds.');
 
     return data;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    throw new Error('Failed to fetch Topics data.');
   }
 }
-
-export async function fetchLatestInvoices() {
+export async function fetchTopicIdByTitle(topicTitle: string) {
   try {
-    const data = await sql<LatestInvoiceRaw[]>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
-
-    const latestInvoices = data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
-    return latestInvoices;
+    const result = await sql`
+    SELECT id FROM topics WHERE  LOWER(TRIM(title)) = LOWER(TRIM(${topicTitle}))
+    `;
+    return result[0].id;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    throw new Error('Failed to fetch topic ID');
   }
 }
-
-export async function fetchCardData() {
+export async function fetchTopicByTitle(topicTitle: string) {
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
-
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
-
-    const numberOfInvoices = Number(data[0][0].count ?? '0');
-    const numberOfCustomers = Number(data[1][0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0');
-
-    return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
-    };
+    const result = await sql`
+    SELECT 
+        topics.*, 
+        users.name as creator_name 
+      FROM topics 
+      INNER JOIN users ON topics.user_id = users.id
+      WHERE LOWER(TRIM(topics.title)) = LOWER(TRIM(${topicTitle}))
+   
+    `;
+    return result[0];
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
+    throw new Error('Failed to fetch topic ID');
   }
 }
-
-const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices(
-  query: string,
-  currentPage: number,
-) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
+export async function fetchFilteredTopics(query: string) {
   try {
-    const invoices = await sql<InvoicesTable[]>`
-      SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
+    const searchTerm = `%${query.toLowerCase().trim()}%`;
+    const data = await sql<
+      Topic[]
+    >`SELECT * FROM topics WHERE LOWER(TRIM(title)) ILIKE ${searchTerm}`;
+
+    return data;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch Filtered Topics');
+  }
+}
+export async function fetchPostsByTopic(topicId: string) {
+  try {
+    const result = await sql`
+      SELECT 
+        posts.id,
+        posts.title,
+        posts.text,
+        posts.created_at,
+        users.name as author_name,
+        users.id as author_id
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      WHERE posts.topic_id = ${topicId}
+      ORDER BY posts.created_at DESC
     `;
 
-    return invoices;
+    return result;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch posts for this topic');
+  }
+}
+export async function fetchPostbyId(postId: string) {
+  try {
+    const result = await sql<PostWithUserName[]>`
+    SELECT p.*,u.name FROM posts p
+    INNER JOIN users u  ON p.user_id=u.id
+    WHERE p.id=${postId}
+        `;
+    console.log(`result:${result}`);
+    return result[0];
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch post');
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+export async function fetchCommentsByPostId(postId: string) {
   try {
-    const data = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
-
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
-  } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
-  }
-}
-
-export async function fetchInvoiceById(id: string) {
-  try {
-    const data = await sql<InvoiceForm[]>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
+    const comments = await sql`
+    SELECT 
+        comments.id AS comment_id,  -- Alias to avoid conflict
+        comments.text, 
+        comments.created_at, 
+        comments.parent_id, 
+        users.name AS user_name     -- Alias for clarity
+      FROM comments
+      INNER JOIN users 
+        ON comments.user_id = users.id
+      WHERE comments.post_id = ${postId}
+      ORDER BY comments.created_at DESC;  -- Newest comments first
     `;
-
-    const invoice = data.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
-
-    return invoice[0];
+    return comments;
   } catch (error) {
-    console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
-  }
-}
-
-export async function fetchCustomers() {
-  try {
-    const customers = await sql<CustomerField[]>`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `;
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
-  }
-}
-
-export async function fetchFilteredCustomers(query: string) {
-  try {
-    const data = await sql<CustomersTableType[]>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
-	  `;
-
-    const customers = data.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
-    }));
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
+    console.error(error);
+    throw new Error('Database Error : Failed To Fetch Comments');
   }
 }

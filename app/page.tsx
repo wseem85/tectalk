@@ -1,5 +1,6 @@
 import AcmeLogo from '@/app/ui/acme-logo';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
+import { ArrowUpIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -18,12 +19,20 @@ export default function Page() {
             <p className="text-blue-500">Talking About Technical Stuff</p>,
             brought to you by Wseem Kharma.
           </p>
-          <Link
-            href="/login"
-            className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
-          >
-            <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
-          </Link>
+          <div className="flex gap-8 items-center">
+            <Link
+              href="/login"
+              className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+            >
+              <span>Log in</span> <ArrowRightIcon className="w-5 md:w-6" />
+            </Link>
+            <Link
+              href="/signup"
+              className="flex items-center gap-5 self-start rounded-lg bg-blue-500 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-blue-400 md:text-base"
+            >
+              <span>Sign up</span> <ArrowUpIcon className="w-5 md:w-6" />
+            </Link>
+          </div>
         </div>
         <div className="flex items-center justify-center p-6 md:w-3/5 xl:px-28 xl:py-12">
           <Image

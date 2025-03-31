@@ -1,3 +1,3 @@
-export default function Page() {
-  return <p>Content Page</p>;
+export default async function Page() {
+  return <div className="flex flex-col gap-8">Page Layout</div>;
 }
