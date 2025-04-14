@@ -1,32 +1,37 @@
-// Map of links to display in the side navigation.
+import { TopicWithPostsCount } from '../../lib/definitions';
+import { SideLink } from '../side-link';
+import WindowSizeDetector from '../window-size-detector';
 
-import Link from 'next/link';
-import { Topic } from '../../lib/definitions';
-
-// Depending on the size of the application, this would be stored in a database.
+import SideLinkDesktop from '../side-link-desktop';
+import Search from '../search';
 
 export default async function TopicLinks({
   topics,
 }: {
-  topics: Topic[] | undefined;
+  topics: TopicWithPostsCount[] | undefined;
 }) {
-  // return null;
   return (
-    <>
-      {topics?.map((topic) => {
+    <WindowSizeDetector
+      mobileComponentToShow={topics?.map((topic) => {
         const encodedTitle = encodeURIComponent(topic.title.toLowerCase());
 
         const href = `/topics/${encodedTitle}`;
         return (
-          <Link
-            key={topic.id}
-            href={href}
-            className="flex h-[48px] grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3"
-          >
-            <p className="hidden md:block">{encodedTitle}</p>
-          </Link>
+          <SideLink key={topic.id} href={href}>
+            <p className="font-semibold capitalize tracking-wide">
+              {topic.title}
+            </p>
+            <p className="italic"> ( {topic.posts_count} posts)</p>
+          </SideLink>
         );
       })}
-    </>
+      desktopComponentToShow={topics?.map((topic) => {
+        const encodedTitle = encodeURIComponent(topic.title.toLowerCase());
+
+        const href = `/topics/${encodedTitle}`;
+        return <SideLinkDesktop topic={topic} href={href} />;
+      })}
+      children={null}
+    ></WindowSizeDetector>
   );
 }

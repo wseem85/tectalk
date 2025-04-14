@@ -1,19 +1,27 @@
 // app/components/sidenav-wrapper.tsx
-import { fetchFilteredTopics, fetchTopics } from '@/app/lib/data';
+import { fetchTopics } from '@/app/lib/data';
 
-import { Suspense } from 'react';
-import TopicsListSkeleton from './topics-list-skeleton';
-import { Topic } from '@/app/lib/definitions';
 import TopicLinks from '@/app/ui/topic/topics-links';
+import Search from '../search';
 
 export default async function TopicListWrapper({ query }: { query: string }) {
   try {
     const topics = await fetchTopics(query);
-    console.log(topics);
+
     if (topics?.length === 0) {
-      return <div>There are No Topics matches your query !</div>;
+      return (
+        <div className="flex flex-col gap-2">
+          <Search placeholder="Search Topics" />
+          <p>There are No Topics matches your query !</p>
+        </div>
+      );
     }
-    return <TopicLinks topics={topics} />;
+    return (
+      <>
+        <Search placeholder="Search Topics" />
+        <TopicLinks topics={topics} />
+      </>
+    );
   } catch (error) {
     return (
       <div className="text-red-500 p-4">
@@ -21,12 +29,4 @@ export default async function TopicListWrapper({ query }: { query: string }) {
       </div>
     );
   }
-}
-
-export function TopicsListWithSuspense({ query }: { query: string }) {
-  return (
-    <Suspense fallback={<TopicsListSkeleton />}>
-      <TopicListWrapper query={query} />
-    </Suspense>
-  );
 }

@@ -7,12 +7,16 @@ const users = [
     name: 'John Doe',
     email: 'john@example.com',
     password: '123456',
+    avatar:
+      'https://fwqp5qkk5cd3bhjq.public.blob.vercel-storage.com/postgresql-logo-ElNjbZXdbPFfmGBGMgr12qMtwuJG7u.svg',
   },
   {
     id: '3958dc9e-742f-4377-85e9-fec4b6a6442a',
     name: 'Jane Smith',
     email: 'jane@example.com',
     password: '123456',
+    avatar:
+      'https://fwqp5qkk5cd3bhjq.public.blob.vercel-storage.com/react-2-gtj63gFg47XhRfXizaMkweolztiMGw.svg',
   },
 ];
 

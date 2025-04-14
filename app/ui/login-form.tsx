@@ -18,13 +18,13 @@ export default function LoginForm() {
   );
   const callbackUrl = searchParams.get('callbackUrl') || '/topics';
   return (
-    <form className="space-y-3" action={formAction}>
+    <form className="space-y-3 md:space-y-5" action={formAction}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={` mb-3 text-2xl`}>Please log in to continue.</h1>
-        <div className="w-full">
+        <div className="w-full space-y-3 md:space-y-6">
           <div>
             <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              className="mb-3 mt-5 block text-xs sm:text-base font-medium text-gray-900"
               htmlFor="email"
             >
               Email
@@ -43,7 +43,7 @@ export default function LoginForm() {
           </div>
           <div className="mt-4">
             <label
-              className="mb-3 mt-5 block text-xs font-medium text-gray-900"
+              className="mb-3 mt-5 block text-xs sm:text-base  font-medium text-gray-900"
               htmlFor="password"
             >
               Password
@@ -63,8 +63,11 @@ export default function LoginForm() {
           </div>
         </div>
         <input type="hidden" name="redirectTo" value={callbackUrl} />
-        <Button className="mt-4 w-full" aria-disabled={isPending}>
-          Log in <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
+        <Button
+          className=" flex mt-6 py-5 text-base gap-6 justify-center items-center w-full"
+          aria-disabled={isPending}
+        >
+          Log in <ArrowRightIcon className="h-5 w-5 text-gray-50" />
         </Button>
         <div className="flex h-8 items-end space-x-1">
           {errorMessage && (

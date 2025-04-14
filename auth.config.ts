@@ -1,13 +1,5 @@
 import type { NextAuthConfig } from 'next-auth';
-import postgres from 'postgres';
-interface Session {
-  user: {
-    id?: string;
-    name?: string;
-    email?: string;
-  };
-}
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+
 export const authConfig = {
   pages: {
     signIn: '/login',
@@ -16,6 +8,7 @@ export const authConfig = {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
       const isOnTopics = nextUrl.pathname.startsWith('/topics');
+
       if (isOnTopics) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page

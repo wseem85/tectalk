@@ -1,3 +1,5 @@
+import TopicSkeleton from '@/app/ui/topic/topic-skeleton';
+
 export default function Loading() {
-  return <div>Loading Topic ...</div>;
+  return <TopicSkeleton />;
 }

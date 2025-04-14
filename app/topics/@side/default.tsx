@@ -1,44 +1,58 @@
-import { fetchFilteredTopics, fetchTopics } from '@/app/lib/data';
+// import { TopicListWith } from '@/app/ui/topic/topics-list-wrapper';
+import { TopicsListWithSuspense } from '@/app/ui/topic/topics-list-with-suspense';
 
-import { TopicsListWithSuspense } from '@/app/ui/topic/topics-list-wrapper';
-import AcmeLogo from '@/app/ui/acme-logo';
 import Link from 'next/link';
 import Search from '@/app/ui/search';
-import { PowerIcon } from '@heroicons/react/24/solid';
+
 import { Button } from '@/app/ui/button';
-import { auth } from '@/auth';
+
+import SignOutForm from '@/app/ui/signout-form';
+import UserInfo from '@/app/ui/user-info';
+import TecTalkLogo from '@/app/ui/tectalk-logo';
+import SidePageWrapper from '@/app/ui/side-page-wrapper';
+import WindowSizeDetector from '@/app/ui/window-size-detector';
 
 export default async function SidePage({
   searchParams,
 }: {
   searchParams: Promise<{ query: string }>;
 }) {
-  const session = await auth();
   const query = (await searchParams).query || '';
   return (
-    <div className="flex h-full flex-col px-3 py-4 md:px-2">
+    <div className="flex h-auto md:h-sceeen space-y-6 flex-col px-3 py-4 md:px-2 ">
       <Link
-        className="mb-2 flex h-20 items-end justify-start rounded-md bg-blue-600 p-4 md:h-40"
+        className="mb-2 flex h-20 items-end justify-start rounded-md bg-pink-600 p-4 md:h-40"
         href="/"
       >
         <div className="w-32 text-white md:w-40">
-          <AcmeLogo />
+          <TecTalkLogo />
         </div>
       </Link>
-      <div className="flex flex-col gap-6">
-        <div>Welcome back {session?.user?.name}</div>
-        <Link href="/topics/new">
-          <Button>Create New Topic</Button>
-        </Link>
-        <Search placeholder="Search Topics" />
-        <TopicsListWithSuspense query={query} />
-        <form>
-          <button className="flex h-[48px] w-full grow items-center justify-center gap-2 rounded-md bg-gray-50 p-3 text-sm font-medium hover:bg-sky-100 hover:text-blue-600 md:flex-none md:justify-start md:p-2 md:px-3">
-            <PowerIcon className="w-6" />
-            <div className="hidden md:block">Sign Out</div>
-          </button>
-        </form>
-      </div>
+      <UserInfo />
+      <Link href="/topics/new">
+        <Button>Create New Topic</Button>
+      </Link>
+      <WindowSizeDetector
+        children={null}
+        mobileComponentToShow={
+          <>
+            <div className="flex flex-col gap-6 overflow-y-auto">
+              {/* <Search placeholder="Search Topics" /> */}
+              <TopicsListWithSuspense query={query} />
+            </div>
+          </>
+        }
+        desktopComponentToShow={
+          <>
+            <div className="flex flex-col gap-6 overflow-y-auto">
+              {/* <Search placeholder="Search Topics" /> */}
+              <TopicsListWithSuspense query={query} />
+            </div>
+          </>
+        }
+      ></WindowSizeDetector>
+
+      <SignOutForm />
     </div>
   );
 }

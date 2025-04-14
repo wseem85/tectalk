@@ -3,9 +3,10 @@ import { z } from 'zod';
 import postgres from 'postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { auth, signIn } from '@/auth';
+import { auth, signIn, signOut } from '@/auth';
 import { AuthError } from 'next-auth';
 import bcrypt from 'bcryptjs';
+import { put } from '@vercel/blob';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 export type StateTopic = {
   errors?: {
@@ -72,7 +73,16 @@ const SignupSchema = z.object({
     .string()
     .min(6, { message: 'Password must be at least 6 characters' })
     .max(100),
-  avatar_url: z.string().optional(),
+  avatar: z
+    .custom<File>()
+    .optional()
+    .refine(
+      (file) => {
+        // If a file exists, check it's a valid File instance
+        return !file || (file instanceof File && file.size <= 2 * 1024 * 1024); // Optional: Add size limit (2MB)
+      },
+      { message: 'Avatar must be a valid file' }
+    ),
 });
 export async function createPost(
   slug: string,
@@ -185,7 +195,7 @@ export async function createTopic(prevSate: StateTopic, formData: FormData) {
   //revalidate path to clear cache and trigger a new request to get the updated data
   revalidatePath('/topics');
   // redirect
-  redirect(`/topics/${title}`);
+  redirect(`/topics/${encodeURIComponent(title)}`);
 }
 export async function authenticate(
   prevSate: string | undefined,
@@ -199,7 +209,7 @@ export async function authenticate(
         case 'CredentialsSignin':
           return 'Invaled Credentials';
         default:
-          return 'Something Went Wrong';
+          return 'Can not log you in , Something Went Wrong!';
       }
     }
     throw error;
@@ -211,9 +221,9 @@ export async function register(prevState: StateSignup, formData: FormData) {
     email: formData.get('email'),
     name: formData.get('name'),
     password: formData.get('password'),
-    avatar_url: formData.get('avatar_url'),
+    avatar: formData.get('avatar'),
   };
-
+  console.log(rawFormData);
   // Validate form fields
   const validatedFields = SignupSchema.safeParse(rawFormData);
 
@@ -224,7 +234,7 @@ export async function register(prevState: StateSignup, formData: FormData) {
     };
   }
 
-  const { email, name, password, avatar_url } = validatedFields.data;
+  const { email, name, password, avatar } = validatedFields.data;
 
   try {
     // Check if user exists
@@ -241,11 +251,27 @@ export async function register(prevState: StateSignup, formData: FormData) {
 
     // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
-
+    let avatarUrl: string | null = null;
+    // Upload avatar to Vercel Blob if exists
+    if (avatar instanceof File && avatar.size > 0) {
+      try {
+        const blob = await put(avatar.name, avatar, {
+          access: 'public',
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+        });
+        avatarUrl = blob.url;
+      } catch (uploadError) {
+        console.error('Avatar upload failed:', uploadError);
+        return {
+          message: 'Failed to upload avatar',
+          errors: { avatar: ['Avatar upload failed'] },
+        };
+      }
+    }
     // Insert new user
     await sql`
-      INSERT INTO users (email,name, password,avatar_url)
-      VALUES (${email},${name}, ${hashedPassword},${avatar_url || null})
+      INSERT INTO users (email,name, password,avatar)
+      VALUES (${email},${name}, ${hashedPassword},${avatarUrl || null})
     `;
   } catch (error) {
     console.error('Signup Error:', error);
@@ -295,15 +321,15 @@ export async function createComment(
       },
     };
   }
-
+  const date = new Date().toISOString();
   const userId = session.user.id;
   const text = result.data.text;
 
   // return { errors: {} };
   try {
     await sql`
-    INSERT INTO comments ( text, user_id, post_id,parent_id)
-    VALUES (${text},${userId},${postId},${parentId || null})
+    INSERT INTO comments ( text,created_at, user_id, post_id,parent_id)
+    VALUES (${text},${date},${userId},${postId},${parentId || null})
     `;
   } catch (err) {
     if (err instanceof Error) {
@@ -336,4 +362,18 @@ export async function createComment(
     errors: {},
     success: true,
   };
+}
+
+// export async function logOut() {
+//   try {
+//     await signOut();
+//   } catch (error) {
+//     console.error(error);
+//     throw new Error('Error Signing Out');
+//   }
+//   redirect('/');
+// }
+
+export async function signInWithGithub() {
+  await signIn('github');
 }

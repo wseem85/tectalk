@@ -9,6 +9,7 @@ export type User = {
   email: string;
   password: string;
   created_at?: Date;
+  avatar?: string | null;
 };
 
 export type Topic = {
@@ -42,13 +43,23 @@ export type PostWithRelations = Post & {
   topic: Topic;
   comments: Comment[];
 };
-export type PostWithUserName = Post & {
+export type PostWithAuthor = Post & {
   name: string;
+  avatar: string;
+};
+export type PostWithAuthorAndCommentsCount = Post & {
+  author_name: string;
+  avatar: string;
+  topic_title: string;
+  comments_count: number;
 };
 
 export type TopicWithPosts = Topic & {
   user: User;
   posts: PostWithRelations[];
+};
+export type TopicWithPostsCount = Topic & {
+  posts_count: number;
 };
 
 export type CommentWithUser = Comment & {

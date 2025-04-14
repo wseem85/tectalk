@@ -1,4 +1,5 @@
 import NextAuth from 'next-auth';
+import GitHub from 'next-auth/providers/github';
 import { authConfig } from './auth.config';
 import type { User } from '@/app/lib/definitions';
 import postgres from 'postgres';
@@ -15,7 +16,7 @@ async function getUser(email: string): Promise<User | undefined> {
     throw new Error('Failed to fetch user ');
   }
 }
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -36,5 +37,33 @@ export const { auth, signIn, signOut } = NextAuth({
         return null;
       },
     }),
+    GitHub({
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    }),
   ],
+  callbacks: {
+    ...authConfig.callbacks,
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'github') {
+        try {
+          const existingUser = await getUser(user.email!);
+          console.log(user, profile, account);
+          if (!existingUser) {
+            await sql`
+            INSERT INTO users (name,email,avatar)
+            VALUES (${user?.name || 'Github User'},${user?.email || ''},${
+              user?.image || null
+            })
+            ON CONFLICT (email) DO NOTHING
+            `;
+          }
+        } catch (error) {
+          console.log(error);
+          return false;
+        }
+      }
+      return true;
+    },
+  },
 });
