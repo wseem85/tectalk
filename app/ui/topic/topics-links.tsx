@@ -1,3 +1,4 @@
+'use client';
 import { TopicWithPostsCount } from '../../lib/definitions';
 import { SideLink } from '../side-link';
 import WindowSizeDetector from '../window-size-detector';
@@ -5,7 +6,7 @@ import WindowSizeDetector from '../window-size-detector';
 import SideLinkDesktop from '../side-link-desktop';
 import Search from '../search';
 
-export default async function TopicLinks({
+export default function TopicLinks({
   topics,
 }: {
   topics: TopicWithPostsCount[] | undefined;
@@ -29,9 +30,8 @@ export default async function TopicLinks({
         const encodedTitle = encodeURIComponent(topic.title.toLowerCase());
 
         const href = `/topics/${encodedTitle}`;
-        return <SideLinkDesktop topic={topic} href={href} />;
+        return <SideLinkDesktop key={topic.id} topic={topic} href={href} />;
       })}
-      children={null}
     ></WindowSizeDetector>
   );
 }

@@ -90,7 +90,7 @@ export async function createPost(
   formData: FormData
 ) {
   // creting a new Date as a string in the form 'YYYY-MM-DD'
-  const date = new Date().toISOString().split('T')[0];
+  const date = new Date().toISOString();
   let topicId: string;
 
   const session = await auth();
@@ -107,13 +107,18 @@ export async function createPost(
   }
   // Check if user is authenticated
 
-  if (!session?.user?.id || !session?.user?.email) {
+  // Check if user is authenticated
+  if (!session?.user?.id || !session?.user?.providerAccountId) {
     return {
-      message: 'Unauthorized: You must be logged in to create a Post',
+      message: 'Unauthorized: You must be logged in to create a topic',
     };
   }
+  const res = await sql`
+  SELECT id FROM users 
+  WHERE id = ${session.user.id} OR provider_account_id = ${session.user.providerAccountId}`;
 
-  let userId: string = session.user.id;
+  const userId = res[0]?.id;
+  // let userId: string = session.user.id;
 
   const topicResult = await sql`
   SELECT title FROM topics WHERE id = ${topicId}
@@ -153,14 +158,13 @@ export async function createPost(
 }
 export async function createTopic(prevSate: StateTopic, formData: FormData) {
   // creting a new Date as a string in the form 'YYYY-MM-DD'
-  const date = new Date().toISOString().split('T')[0];
-  // set a user id manually , after authentication this will change
-  // const user_id = '410544b2-4001-4271-9855-fec4b6a6442a';
+  const date = new Date().toISOString();
+
   // Get current session
   const session = await auth();
 
   // Check if user is authenticated
-  if (!session?.user?.email || !session?.user?.id) {
+  if (!session?.user?.id || !session.user.providerAccountId) {
     return {
       message: 'Unauthorized: You must be logged in to create a topic',
     };
@@ -180,7 +184,12 @@ export async function createTopic(prevSate: StateTopic, formData: FormData) {
   const { title, description } = validatedFields.data;
   //insert data
   try {
-    const userId: string = session.user.id;
+    const res = await sql`
+    SELECT id FROM users 
+    WHERE id = ${session.user.id} OR provider_account_id = ${session.user.providerAccountId}`;
+
+    const userId = res[0]?.id;
+
     await sql`
     INSERT INTO topics (title,description,created_at,user_id)
     VALUES (${title},${description},${date},${userId})
@@ -223,7 +232,7 @@ export async function register(prevState: StateSignup, formData: FormData) {
     password: formData.get('password'),
     avatar: formData.get('avatar'),
   };
-  console.log(rawFormData);
+
   // Validate form fields
   const validatedFields = SignupSchema.safeParse(rawFormData);
 
@@ -314,7 +323,8 @@ export async function createComment(
   }
 
   const session = await auth();
-  if (!session || !session.user?.id) {
+
+  if (!session?.user?.id || !session?.user?.providerAccountId) {
     return {
       errors: {
         _form: ['You must sign in to do this.'],
@@ -322,7 +332,12 @@ export async function createComment(
     };
   }
   const date = new Date().toISOString();
-  const userId = session.user.id;
+  // const userId = session.user.id;
+  const res = await sql`
+  SELECT id FROM users 
+  WHERE id = ${session.user.id} OR provider_account_id = ${session.user.providerAccountId}`;
+
+  const userId = res[0]?.id;
   const text = result.data.text;
 
   // return { errors: {} };
@@ -364,16 +379,9 @@ export async function createComment(
   };
 }
 
-// export async function logOut() {
-//   try {
-//     await signOut();
-//   } catch (error) {
-//     console.error(error);
-//     throw new Error('Error Signing Out');
-//   }
-//   redirect('/');
-// }
-
 export async function signInWithGithub() {
   await signIn('github');
+}
+export async function signInWithGoogle() {
+  await signIn('google');
 }

@@ -8,7 +8,7 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from './button';
+import { Button } from '@heroui/button';
 
 export default function LoginForm() {
   const searchParams = useSearchParams();
@@ -19,7 +19,7 @@ export default function LoginForm() {
   const callbackUrl = searchParams.get('callbackUrl') || '/topics';
   return (
     <form className="space-y-3 md:space-y-5" action={formAction}>
-      <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
+      <div className="flex-1  bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={` mb-3 text-2xl`}>Please log in to continue.</h1>
         <div className="w-full space-y-3 md:space-y-6">
           <div>
@@ -29,9 +29,9 @@ export default function LoginForm() {
             >
               Email
             </label>
-            <div className="relative">
+            <div className="relative bg-gray-50">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border bg-whute  border-gray-300 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="email"
                 type="email"
                 name="email"
@@ -50,7 +50,7 @@ export default function LoginForm() {
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md bg-white border border-gray-300 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="password"
                 type="password"
                 name="password"
@@ -64,6 +64,10 @@ export default function LoginForm() {
         </div>
         <input type="hidden" name="redirectTo" value={callbackUrl} />
         <Button
+          type="submit"
+          isLoading={isPending}
+          disabled={isPending}
+          color="primary"
           className=" flex mt-6 py-5 text-base gap-6 justify-center items-center w-full"
           aria-disabled={isPending}
         >

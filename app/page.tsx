@@ -8,7 +8,7 @@ import Link from 'next/link';
 export default function Page() {
   return (
     <main className="flex min-h-screen flex-col p-6">
-      <div className="flex h-24 shrink-0 items-center justify-center rounded-lg bg-pink-600 p-4 md:h-36">
+      <div className="flex h-24 shrink-0 items-center justify-center rounded-lg bg-secondary p-4 md:h-36">
         <TecTalkLogo />
       </div>
       <div className="mt-4 flex grow flex-col gap-4 md:flex-row">
@@ -16,9 +16,9 @@ export default function Page() {
           <p
             className={`text-xl text-center text-gray-800 lg:text-2xl xl:text-3xl md:leading-normal`}
           >
-            <strong>Welcome to TecTalk.</strong> This is a place for
-            <span className=" inline-block ml-2 mr-2 text-pink-700">
-              Talking About Technical Stuff
+            <strong>Welcome to TecTalk.</strong> Your Ultimate Hub for
+            <span className=" inline-block font-semibold ml-2 mr-2 text-secondary">
+              Technology Talk
             </span>
             , brought to you by F.Dev.
           </p>
@@ -31,7 +31,7 @@ export default function Page() {
             </Link>
             <Link
               href="/signup"
-              className="flex ml-auto mr-auto w-40 gap-4 justify-center  rounded-lg bg-pink-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-pink-500 sm:text-base"
+              className="flex ml-auto mr-auto w-40 gap-4 justify-center  rounded-lg bg-secondary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-pink-500 sm:text-base"
             >
               <span>Sign up</span> <UserPlusIcon className="w-4 md:w-6" />
             </Link>

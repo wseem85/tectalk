@@ -3,7 +3,6 @@ import {
   User,
   Topic,
   TopicWithPostsCount,
-  CommentWithUser,
   PostWithAuthor,
   PostWithAuthorAndCommentsCount,
 } from './definitions';
@@ -36,15 +35,14 @@ export async function fetchTopics(query: string) {
        `;
     }
 
-    // console.log('Data fetch completed after 3 seconds.');
-
     return data;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch Topics data.');
+    throw new Error('Database Error: Failed to fetch Topics data.');
   }
 }
 export async function fetchTopicIdByTitle(topicTitle: string) {
+  // throw new Error('Error Fetching Topic');
   try {
     const result = await sql`
     SELECT id FROM topics WHERE  LOWER(TRIM(title)) = LOWER(TRIM(${topicTitle}))
@@ -52,11 +50,12 @@ export async function fetchTopicIdByTitle(topicTitle: string) {
     return result[0].id;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch topic ID');
+    throw new Error('Database Error: Failed to fetch topic ID');
   }
 }
 export async function fetchTopicByTitle(topicTitle: string) {
   try {
+    // throw new Error('Error Getting Topic');
     const result = await sql`
     SELECT 
         topics.*, 
@@ -70,7 +69,7 @@ export async function fetchTopicByTitle(topicTitle: string) {
     return result[0];
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch topic ID');
+    throw new Error('Database Error: Failed to fetch Topic');
   }
 }
 export async function fetchFilteredTopics(query: string) {
@@ -83,7 +82,7 @@ export async function fetchFilteredTopics(query: string) {
     return data;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch Filtered Topics');
+    throw new Error('Database Error: Failed to fetch Filtered Topics');
   }
 }
 
@@ -104,11 +103,12 @@ export async function fetchNewPosts() {
       ORDER BY posts.created_at DESC
       LIMIT 5
     `;
+    // throw new Error('Test Failing on Main Page fetching');
 
     return result;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch new posts');
+    throw new Error('Database Error: Failed to fetch new posts');
   }
 }
 
@@ -133,7 +133,7 @@ export async function fetchTopPosts() {
     return result;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch new posts');
+    throw new Error('Database Error: Failed to fetch top posts');
   }
 }
 export async function fetchPostsByTopic(topicId: string) {
@@ -158,21 +158,21 @@ export async function fetchPostsByTopic(topicId: string) {
     return result;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch posts for this topic');
+    throw new Error('Database Error: Failed to fetch posts for this topic');
   }
 }
 export async function fetchPostbyId(postId: string) {
+  // throw new Error('Error Loading Post ');
   try {
     const result = await sql<PostWithAuthor[]>`
     SELECT p.*,u.name,u.avatar FROM posts p
     INNER JOIN users u  ON p.user_id=u.id
     WHERE p.id=${postId}
         `;
-    console.log(`result:${result}`);
     return result[0];
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch post');
+    throw new Error('Database Error: Failed to fetch post');
   }
 }
 
@@ -205,16 +205,42 @@ export async function fetchUsers() {
     return data;
   } catch (error) {
     console.error(error);
-    throw new Error('Can not fetch users');
+    throw new Error('Database Error: Can not fetch users');
   }
 }
 export async function fetchUserByEmail(email: string) {
   try {
+    const users = await sql<User[]>`SELECT * FROM users`;
+    console.log(users);
+    // console.log(email);
     const data = await sql<User[]>`SELECT * FROM users WHERE email=${email} `;
 
     return data[0];
   } catch (error) {
     console.error(error);
-    throw new Error('Can not fetch users');
+    throw new Error('Database Error: Can not fetch users');
+  }
+}
+export async function fetchUserById(
+  id: string,
+  providerId: string | null | undefined
+) {
+  if (!id || !providerId) throw new Error('Missing ID or provider ID');
+  // throw new Error('Error Getting User Info');
+  try {
+    if (providerId) {
+      const data = await sql<
+        User[]
+      >`SELECT * FROM users WHERE id=${id} OR provider_account_id=${providerId} `;
+
+      return data[0];
+    } else {
+      const data = await sql<User[]>`SELECT * FROM users WHERE id=${id} `;
+
+      return data[0];
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Database Error: Failed to get user info');
   }
 }

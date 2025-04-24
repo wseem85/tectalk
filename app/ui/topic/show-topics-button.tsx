@@ -3,7 +3,7 @@ import {
   ArrowDownCircleIcon,
   ArrowUpCircleIcon,
 } from '@heroicons/react/24/solid';
-import { Button } from '../button';
+import { Button } from '@heroui/button';
 import { useSide } from '../side-context';
 
 export default function ShowTopicsButton() {
@@ -11,16 +11,15 @@ export default function ShowTopicsButton() {
 
   return (
     <Button
-      className={`w-full ${
-        isOpen ? 'bg-gray-100' : 'bg-blue-200'
-      }  rounded-none my-2 flex justify-center items-center gap-2`}
-      onClick={() => setIsOpen(!isOpen)}
+      color={`${isOpen ? 'default' : 'primary'}`}
+      className="rounded-none my-2 flex justify-center items-center gap-2"
+      onPress={() => setIsOpen(!isOpen)}
     >
-      <span>{isOpen ? 'Hide Topics' : 'Show Topics'}</span>
+      <span>{isOpen ? 'Hide Topics' : 'Show All Topics'}</span>
       {isOpen ? (
-        <ArrowUpCircleIcon className="animate-bounce" />
+        <ArrowUpCircleIcon className="w-4 h-4 " />
       ) : (
-        <ArrowDownCircleIcon className="animate-bounce" />
+        <ArrowDownCircleIcon className="w-4 h-4 " />
       )}
     </Button>
   );

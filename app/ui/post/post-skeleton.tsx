@@ -2,7 +2,7 @@ import { Skeleton } from '@heroui/skeleton';
 
 export default function PostSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 mt-6">
       <div className=" min-w-[300px] max-w-[300px] w-full flex flex-col items-center gap-3">
         <div className="w-full flex  ">
           <Skeleton className="h-4 w-2/5 rounded-lg" />

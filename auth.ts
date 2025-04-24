@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth';
 import GitHub from 'next-auth/providers/github';
+import Google from 'next-auth/providers/google';
 import { authConfig } from './auth.config';
 import type { User } from '@/app/lib/definitions';
 import postgres from 'postgres';
@@ -7,9 +8,23 @@ import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import Credentials from 'next-auth/providers/credentials';
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-async function getUser(email: string): Promise<User | undefined> {
+async function getUser(
+  email: string,
+  provider?: string
+): Promise<User | undefined> {
   try {
-    const user = await sql<User[]>`SELECT * FROM users WHERE email=${email}`;
+    const user = await sql<User[]>`SELECT * FROM users WHERE email=${email} ${
+      provider ? sql`AND provider=${provider}` : sql``
+    }`;
+    return user[0];
+  } catch (error) {
+    console.error('Failed to fetch user', error);
+    throw new Error('Failed to fetch user');
+  }
+}
+async function getUserById(id: string): Promise<User | undefined> {
+  try {
+    const user = await sql<User[]>`SELECT * FROM users WHERE id=${id}`;
     return user[0];
   } catch (error) {
     console.error('Failed to fetch user', error);
@@ -41,23 +56,33 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
     }),
+    Google({
+      clientId: process.env.AUTH_GOOGLE_ID,
+      clientSecret: process.env.AUTH_GOOGLE_SECRET,
+    }),
   ],
   callbacks: {
     ...authConfig.callbacks,
-    async signIn({ user, account, profile }) {
-      if (account?.provider === 'github') {
+    async signIn({ user, account }) {
+      if (account?.provider === 'github' || account?.provider === 'google') {
         try {
-          const existingUser = await getUser(user.email!);
-          console.log(user, profile, account);
+          const existingUser = await getUser(user.email!, account.provider);
+          const providerUserId = account.providerAccountId;
           if (!existingUser) {
             await sql`
-            INSERT INTO users (name,email,avatar)
-            VALUES (${user?.name || 'Github User'},${user?.email || ''},${
-              user?.image || null
-            })
-            ON CONFLICT (email) DO NOTHING
+            INSERT INTO users (name, email, avatar, provider,provider_account_id)
+            VALUES (
+                    ${user?.name || `${account.provider} User`}, 
+                    ${user?.email || ''},
+                    ${user?.image || null},
+                    ${account.provider},
+                    ${providerUserId}
+                    )
+                    
+            ON CONFLICT (email, provider) DO NOTHING
             `;
           }
+          return true;
         } catch (error) {
           console.log(error);
           return false;

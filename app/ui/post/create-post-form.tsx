@@ -2,13 +2,13 @@
 
 import { CurrencyDollarIcon, HashtagIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
-import { Button } from '../button';
+import { Button } from '@heroui/react';
 import { createPost } from '@/app/lib/actions';
 import { StatePost } from '@/app/lib/actions';
 import { useActionState } from 'react';
 export default function CreatePostForm({ slug }: { slug: string }) {
   const initialState: StatePost = { message: null, errors: {} };
-  const [state, formAction] = useActionState(
+  const [state, formAction, isPending] = useActionState(
     createPost.bind(null, slug),
     initialState
   );
@@ -74,7 +74,14 @@ export default function CreatePostForm({ slug }: { slug: string }) {
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-4">
-          <Button type="submit">Create Post</Button>
+          <Button
+            type="submit"
+            color="primary"
+            isLoading={isPending}
+            disabled={isPending}
+          >
+            Create Post
+          </Button>
         </div>
       </div>
     </form>

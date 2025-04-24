@@ -19,7 +19,7 @@ export default async function CommentShow({
   const comments = await fetchCommentsByPostId(postId);
 
   const comment = comments.find((c) => c.comment_id === commentId);
-  console.log(comment);
+
   if (!comment) {
     return null;
   }

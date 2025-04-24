@@ -18,9 +18,12 @@ async function seedUsers() {
     CREATE TABLE IF NOT EXISTS users (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       name VARCHAR(255) NOT NULL,
-      email TEXT NOT NULL UNIQUE,
+      email TEXT NOT NULL,
       password TEXT ,
-      avatar VARCHAR(255)
+      avatar VARCHAR(255),
+      provider VARCHAR(50) NOT NULL DEFAULT 'credentials',
+      provider_account_id VARCHAR(255),
+      CONSTRAINT email_provider_unique UNIQUE (email, provider)
     );
 
   `;

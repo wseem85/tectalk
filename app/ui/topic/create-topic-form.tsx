@@ -6,13 +6,16 @@ import {
   HashtagIcon,
 } from '@heroicons/react/24/solid';
 
-import { Button } from '../button';
+import { Button } from '@heroui/react';
 import { createTopic } from '@/app/lib/actions';
 import { StateTopic } from '@/app/lib/actions';
 import { useActionState } from 'react';
 export default function CreateTopicForm() {
   const initialState: StateTopic = { message: null, errors: {} };
-  const [state, formAction] = useActionState(createTopic, initialState);
+  const [state, formAction, isPending] = useActionState(
+    createTopic,
+    initialState
+  );
 
   return (
     <form action={formAction}>
@@ -76,7 +79,14 @@ export default function CreateTopicForm() {
           </div>
         </div>
         <div className="mt-6 flex justify-end gap-4">
-          <Button type="submit">Create Topic</Button>
+          <Button
+            type="submit"
+            isLoading={isPending}
+            isDisabled={isPending}
+            color="primary"
+          >
+            Create Topic
+          </Button>
         </div>
       </div>
     </form>

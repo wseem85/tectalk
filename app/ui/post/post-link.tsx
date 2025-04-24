@@ -10,12 +10,12 @@ interface PostLinkProps {
 }
 
 export default function PostLink({ slug, post, topicId }: PostLinkProps) {
-  console.log(post);
   return (
     <div className=" bg-gray-100 flex flex-col gap-1 rounded-lg w-full  px-2 py-3">
       <Link
+        prefetch
         className="font-bold underline tracking-wide capitalize hover:text-blue-400 duration-75"
-        href={`/topics/${slug}/posts/${post.id}`}
+        href={`/topics/${slug}/posts/${post.id}#post-content`}
         key={topicId}
       >
         {post.title}

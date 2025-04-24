@@ -18,7 +18,7 @@ type SideContextType = {
 const SideContext = createContext<SideContextType | undefined>(undefined);
 
 export function SideProvider({ children }: { children: React.ReactNode }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <SideContext.Provider
