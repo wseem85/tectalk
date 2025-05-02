@@ -50,6 +50,11 @@ export type TopicWithPostsCount = Topic & {
   posts_count: number;
 };
 
-export type CommentWithUser = Comment & {
-  user: User;
+export type CommentWithRelations = {
+  comment_id: string;
+  text: string;
+  created_at: Date;
+  parent_id: string;
+  user_name: string;
+  user_avatar: string;
 };

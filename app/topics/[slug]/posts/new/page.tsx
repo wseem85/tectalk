@@ -1,5 +1,8 @@
 import CreatePostForm from '@/app/ui/post/create-post-form';
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: 'Create New Post',
+};
 export default async function CreatePostPage({
   params,
 }: {

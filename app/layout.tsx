@@ -1,6 +1,17 @@
 import '@/app/ui/global.css';
 import { lato } from './ui/font';
 import { Providers } from './providers';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    template: '%s | TecTalk Community',
+    default: 'TecTalk Community',
+  },
+  description:
+    'A Collaborative Hub for Sharing Ideas and Engaging in Technical Discussions.',
+  metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
 export default function RootLayout({
   children,
 }: {

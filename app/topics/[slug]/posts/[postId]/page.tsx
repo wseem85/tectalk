@@ -5,8 +5,22 @@ import CommentList from '@/app/ui/comment/comment-list';
 import LocalTime from '@/app/ui/local-time';
 import { auth } from '@/auth';
 import { Avatar } from '@heroui/avatar';
-import { format } from 'date-fns';
+
+import { fetchCommentsByPostId } from '@/app/lib/data';
 import Link from 'next/link';
+import { Metadata } from 'next';
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ postId: string; slug: string }>;
+}): Promise<Metadata> {
+  const id = (await params).postId;
+  const post = await fetchPostbyId(id); // Fetch post data
+  return {
+    title: `${post.title} - Post`, // Fallback if title is missing
+  };
+}
+
 interface TopicShowPageProps {
   params: Promise<{
     postId: string;
@@ -24,6 +38,7 @@ export default async function TopicShowPage({ params }: TopicShowPageProps) {
     session.user.providerAccountId
   );
 
+  const comments = await fetchCommentsByPostId(postId);
   const currentUserAvatar = currentUser.avatar as string;
 
   return (
@@ -53,7 +68,11 @@ export default async function TopicShowPage({ params }: TopicShowPageProps) {
           postId={postId}
           startOpen
         />
-        <CommentList avatar={currentUserAvatar} postId={postId} />
+        <CommentList
+          avatar={currentUserAvatar}
+          postId={postId}
+          comments={comments}
+        />
       </div>
     </div>
   );

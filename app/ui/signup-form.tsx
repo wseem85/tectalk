@@ -16,7 +16,8 @@ export default function SignUpForm() {
     <form className="space-y-3 md:space-y-5" action={formAction}>
       <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
         <h1 className={` mb-3 text-2xl`}>
-          Sign Up To See , Add Topics , and Comment on Posts.
+          Join our community to share your ideas and discover inspiring
+          perspectives from others!".
         </h1>
         <div className="mb-4">
           <label htmlFor="email" className="mb-2 block text-sm font-medium">

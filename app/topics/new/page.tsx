@@ -1,5 +1,8 @@
 import CreateTopicForm from '@/app/ui/topic/create-topic-form';
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: 'Create New Topic',
+};
 export default function CreateTopicPage() {
   return (
     <div className="flex flex-col gap-6">

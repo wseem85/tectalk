@@ -2,7 +2,10 @@ import { Suspense } from 'react';
 import SignUpForm from '../ui/signup-form';
 import TecTalkLogo from '../ui/tectalk-logo';
 import Link from 'next/link';
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: 'Sign up',
+};
 export default function SignUpPage() {
   return (
     <main className="flex items-center justify-center md:h-screen">

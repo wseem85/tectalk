@@ -1,17 +1,16 @@
+import { CommentWithRelations } from '@/app/lib/definitions';
 import CommentShow from './comment-show';
-
-import { fetchCommentsByPostId } from '@/app/lib/data';
 
 // TODO: Get a list of comments from somewhere
 export default async function CommentList({
   postId,
   avatar,
+  comments,
 }: {
   postId: string;
   avatar: string;
+  comments: CommentWithRelations[];
 }) {
-  const comments = await fetchCommentsByPostId(postId);
-
   const topLevelComments = comments.filter(
     (comment) => comment.parent_id === null
   );

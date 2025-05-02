@@ -5,6 +5,7 @@ import {
   TopicWithPostsCount,
   PostWithAuthor,
   PostWithAuthorAndCommentsCount,
+  CommentWithRelations,
 } from './definitions';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
@@ -178,7 +179,7 @@ export async function fetchPostbyId(postId: string) {
 
 export async function fetchCommentsByPostId(postId: string) {
   try {
-    const comments = await sql`
+    const comments = await sql<CommentWithRelations[]>`
     SELECT 
         comments.id AS comment_id,  -- Alias to avoid conflict
         comments.text, 

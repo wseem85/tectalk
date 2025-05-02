@@ -2,9 +2,12 @@ import TecTalkLogo from '@/app/ui/tectalk-logo';
 
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import { ArrowUpIcon, UserPlusIcon } from '@heroicons/react/24/solid';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
-
+export const metadata: Metadata = {
+  title: 'TecTalk Community',
+};
 export default function Page() {
   return (
     <main className="flex min-h-screen flex-col p-6">
@@ -31,7 +34,7 @@ export default function Page() {
             </Link>
             <Link
               href="/signup"
-              className="flex ml-auto mr-auto w-40 gap-4 justify-center  rounded-lg bg-secondary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-pink-500 sm:text-base"
+              className="flex ml-auto mr-auto w-40 gap-4 justify-center  rounded-lg bg-secondary px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-secondary-400 sm:text-base"
             >
               <span>Sign up</span> <UserPlusIcon className="w-4 md:w-6" />
             </Link>

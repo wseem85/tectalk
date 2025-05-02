@@ -2,11 +2,24 @@ import { fetchPostsByTopic, fetchTopicByTitle } from '@/app/lib/data';
 import { Post, PostWithAuthorAndCommentsCount } from '@/app/lib/definitions';
 import { Button } from '@heroui/button';
 import PostLink from '@/app/ui/post/post-link';
+import { Metadata } from 'next';
 
 import { Avatar } from '@heroui/avatar';
 
 import Link from 'next/link';
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const decodedSlug = decodeURIComponent((await params).slug);
+  const topic = await fetchTopicByTitle(decodedSlug);
 
+  return {
+    title: `${topic.title} - Topics`, // Example: "Programming - Topics"
+    description: topic.description, // Optional: Use topic description as meta description
+  };
+}
 interface TopicShowPageProps {
   params: Promise<{
     slug: string;

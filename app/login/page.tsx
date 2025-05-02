@@ -6,7 +6,10 @@ import LoginGithubButton from '../ui/login-github-button';
 import Link from 'next/link';
 import { Divider } from '@heroui/react';
 import LoginGoogleButton from '../ui/login-google-button';
-
+import { Metadata } from 'next';
+export const metadata: Metadata = {
+  title: 'Log in',
+};
 export default function Page() {
   return (
     <main className="flex items-center justify-center">
