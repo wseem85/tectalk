@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
       // Add other domains if needed
     ],
   },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '4mb', // Match your Zod schema's 4MB limit
+    },
+  },
 };
 
 export default nextConfig;

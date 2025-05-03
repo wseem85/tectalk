@@ -74,15 +74,10 @@ const SignupSchema = z.object({
     .min(6, { message: 'Password must be at least 6 characters' })
     .max(100),
   avatar: z
-    .custom<File>()
+    .instanceof(File, { message: 'Avatar must be a file' })
+    .refine((file) => file.size <= 4 * 1024 * 1024, 'File must be ≤4MB')
     .optional()
-    .refine(
-      (file) => {
-        // If a file exists, check it's a valid File instance
-        return !file || (file instanceof File && file.size <= 2 * 1024 * 1024); // Optional: Add size limit (2MB)
-      },
-      { message: 'Avatar must be a valid file' }
-    ),
+    .or(z.literal('')),
 });
 export async function createPost(
   slug: string,
@@ -226,19 +221,17 @@ export async function authenticate(
 }
 
 export async function register(prevState: StateSignup, formData: FormData) {
-  console.log('Start Signing Up');
   const rawFormData = {
     email: formData.get('email'),
     name: formData.get('name'),
     password: formData.get('password'),
     avatar: formData.get('avatar'),
   };
-  console.log(`rawFormData:${rawFormData}`);
+
   // Validate form fields
   const validatedFields = SignupSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
-    console.log('Validation failed ');
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to Sign Up.',
