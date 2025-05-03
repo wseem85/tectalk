@@ -67,6 +67,14 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
     Google({
       clientId: process.env.AUTH_GOOGLE_ID,
       clientSecret: process.env.AUTH_GOOGLE_SECRET,
+      authorization: {
+        params: {
+          redirect_uri:
+            process.env.NODE_ENV === 'development'
+              ? 'http://localhost:3000/api/auth/callback/google' // Dev
+              : 'https://tectalk.vercel.app/api/auth/callback/google', // Prod
+        },
+      },
     }),
   ],
   callbacks: {

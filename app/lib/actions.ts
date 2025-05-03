@@ -226,17 +226,19 @@ export async function authenticate(
 }
 
 export async function register(prevState: StateSignup, formData: FormData) {
+  console.log('Start Signing Up');
   const rawFormData = {
     email: formData.get('email'),
     name: formData.get('name'),
     password: formData.get('password'),
     avatar: formData.get('avatar'),
   };
-
+  console.log(`rawFormData:${rawFormData}`);
   // Validate form fields
   const validatedFields = SignupSchema.safeParse(rawFormData);
 
   if (!validatedFields.success) {
+    console.log('Validation failed ');
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'Missing Fields. Failed to Sign Up.',
@@ -244,7 +246,7 @@ export async function register(prevState: StateSignup, formData: FormData) {
   }
 
   const { email, name, password, avatar } = validatedFields.data;
-
+  console.log(`validateddata : ${validatedFields.data}`);
   try {
     // Check if user exists
     const existingUser = await sql`
