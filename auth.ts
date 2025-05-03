@@ -60,7 +60,7 @@ export const { auth, signIn, signOut, handlers } = NextAuth({
           redirect_uri:
             process.env.NODE_ENV === 'development'
               ? 'http://localhost:3000/api/auth/callback/github'
-              : 'https://tectalk.vercel.app//api/auth/callback/github',
+              : 'https://tectalk.vercel.app/api/auth/callback/github',
         },
       },
     }),
