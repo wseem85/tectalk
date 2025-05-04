@@ -8,7 +8,7 @@ import { TopicWithPostsCount } from '@/app/lib/definitions';
 import { useSide } from '../side-context';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { useDebouncedCallback } from 'use-debounce';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import TopicsListSkeleton from './topics-list-skeleton';
 import { Button } from '@heroui/react';
 
@@ -18,6 +18,7 @@ export default function TopicListWrapper({
   initialQuery?: string;
 }) {
   const { replace } = useRouter();
+  const pathname = usePathname();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(initialQuery);
   const [topics, setTopics] = useState<TopicWithPostsCount[]>([]);
@@ -52,13 +53,13 @@ export default function TopicListWrapper({
     // Add debounce to prevent too many requests while typing
     const timer = setTimeout(() => {
       fetchTopics();
-    }, 300);
+    }, 200);
 
     return () => clearTimeout(timer);
   }, [query]);
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (isOpen && !loading && inputRef.current) {
+      if (isOpen && !loading && inputRef.current && !pathname.includes('new')) {
         inputRef.current.focus();
       }
     }, 100);

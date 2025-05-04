@@ -5,14 +5,24 @@ import { useEffect, useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function LocalTime({ utcDate }: { utcDate: string | Date }) {
-  const [localDate, setLocalDate] = useState<Date>(new Date(utcDate));
+  const [localDate, setLocalDate] = useState<Date>(new Date());
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    // Convert UTC to local time explicitly
-    const date = new Date(utcDate);
-    const offset = date.getTimezoneOffset() * 60 * 1000;
-    setLocalDate(new Date(date.getTime() - offset));
+    setIsMounted(true);
+    // Ensure the input is properly parsed as UTC
+    const date =
+      typeof utcDate === 'string'
+        ? new Date(utcDate.endsWith('Z') ? utcDate : utcDate + 'Z')
+        : new Date(utcDate);
+
+    setLocalDate(date);
   }, [utcDate]);
+
+  // To avoid hydration mismatch, don't render anything until mounted
+  if (!isMounted) {
+    return <span className="text-sm text-gray-500">...</span>;
+  }
 
   return (
     <span className="text-sm text-gray-500">
