@@ -239,7 +239,7 @@ export async function register(prevState: StateSignup, formData: FormData) {
   }
 
   const { email, name, password, avatar } = validatedFields.data;
-  console.log(`validateddata : ${validatedFields.data}`);
+
   try {
     // Check if user exists
     const existingUser = await sql`

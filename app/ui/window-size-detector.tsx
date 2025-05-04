@@ -15,7 +15,13 @@ export default function WindowSizeDetector({
   // children: React.ReactNode | null;
 }) {
   const [windowWidth, setWindowWidth] = useState<number>(0);
-
+  const { setIsOpen } = useSide();
+  useEffect(
+    function () {
+      if (windowWidth >= 768) setIsOpen(true);
+    },
+    [windowWidth, setIsOpen]
+  );
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);

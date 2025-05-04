@@ -1,21 +1,20 @@
 'use client';
-import { useSearchParams } from 'next/navigation';
+
 import { register, StateSignup } from '../lib/actions';
-import { useActionState, useState } from 'react';
+import { useActionState } from 'react';
 import { AtSymbolIcon, KeyIcon } from '@heroicons/react/24/outline';
-import { ArrowRightIcon } from '@heroicons/react/20/solid';
+
 import { Button } from '@heroui/button';
 import { UserCircleIcon } from '@heroicons/react/24/solid';
 
 export default function SignUpForm() {
-  const searchParams = useSearchParams();
   const initialState: StateSignup = { message: null, errors: {} };
   const [state, formAction, isPending] = useActionState(register, initialState);
 
   return (
-    <form className="space-y-3 md:space-y-5" action={formAction}>
-      <div className="flex-1 rounded-lg bg-gray-50 px-6 pb-4 pt-8">
-        <h1 className={` mb-3 text-2xl`}>
+    <form style={{ marginTop: 0 }} action={formAction}>
+      <div className="flex-1 rounded-b-lg bg-gray-50 px-6">
+        <h1 className="mb-3 text-2xl py-6">
           Join our community to share your ideas and discover inspiring
           perspectives from others!".
         </h1>

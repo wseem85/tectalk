@@ -62,7 +62,7 @@ export default async function TopicShowPage({ params }: TopicShowPageProps) {
           <p>|</p>
           <LocalTime utcDate={post.created_at} />
         </div>
-        <p className="border rounded p-4">{post.text}</p>
+        <p className="border rounded p-4 whitespace-pre-line">{post.text}</p>
         <CommentCreateForm
           avatar={currentUserAvatar}
           postId={postId}

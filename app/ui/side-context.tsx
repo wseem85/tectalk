@@ -1,13 +1,7 @@
 // components/side-context.tsx
 'use client';
 
-import {
-  ArrowDownCircleIcon,
-  ArrowUpCircleIcon,
-} from '@heroicons/react/24/outline';
-import { Button } from '@heroui/react';
 import { createContext, useContext, useState } from 'react';
-import { boolean } from 'zod';
 
 type SideContextType = {
   isOpen: boolean;

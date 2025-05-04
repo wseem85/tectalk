@@ -8,11 +8,11 @@ export const metadata: Metadata = {
 };
 export default function SignUpPage() {
   return (
-    <main className="flex items-center justify-center md:h-screen">
+    <main className="flex my-2 items-center justify-center md:h-screen">
       <div className="relative mx-auto flex w-full max-w-[400px] md:max-w-[600px] flex-col space-y-2.5 p-4 ">
-        <div className="flex h-20 w-full items-center justify-center rounded-lg bg-secondary p-3 md:h-36">
+        <div className="flex h-20 w-full items-center justify-center rounded-t-lg bg-secondary p-3 md:h-36">
           <div className="w-32 text-white md:w-36">
-            <Link href="/topics">
+            <Link href="/">
               <TecTalkLogo />
             </Link>
           </div>

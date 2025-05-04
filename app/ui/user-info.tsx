@@ -27,9 +27,9 @@ export default async function UserInfo() {
         </p>
       );
     return (
-      <div className="flex items-center gap-4">
-        <Avatar src={user?.avatar || ''} />
+      <div className="flex justify-center items-center gap-4">
         <p>{user.name}</p>
+        <Avatar src={user?.avatar || ''} />
       </div>
     );
   } catch (error) {

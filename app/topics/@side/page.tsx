@@ -2,17 +2,17 @@
 import { Topics } from '@/app/ui/topic/topics-and-search';
 
 import Link from 'next/link';
-import Search from '@/app/ui/search';
 
 import { Button } from '@heroui/button';
 
-import SignOutForm from '@/app/ui/signout-form';
+// import SignOutForm from '@/app/ui/signout-form';
 import UserInfo from '@/app/ui/user-info';
 import TecTalkLogo from '@/app/ui/tectalk-logo';
-import SidePageWrapper from '@/app/ui/side-page-wrapper';
+
 import WindowSizeDetector from '@/app/ui/window-size-detector';
 import { SideProvider } from '@/app/ui/side-context';
 import ShowTopicsButton from '@/app/ui/topic/show-topics-button';
+import SignOutForm from '@/app/ui/signout-form';
 
 export default async function SidePage({
   searchParams,
@@ -22,19 +22,24 @@ export default async function SidePage({
   const query = (await searchParams).query || '';
   return (
     <div className="flex md:h-screen   flex-col  ">
-      <div className="shrink-0 flex flex-col gap-1 px-3 py-4 md:px-2 ">
+      <div className="shrink-0 flex flex-col gap-1 py-4">
         <Link
-          className=" inline-block my-2  h-20 items-center justify-start rounded-md bg-secondary p-4 "
+          className=" inline-block my-2  h-20 items-center justify-start  bg-secondary p-4 "
           href="/"
         >
           <TecTalkLogo />
         </Link>
-        <UserInfo />
-        <Link href="/topics/new">
-          <Button className="mt-3" color="primary">
-            Create New Topic
-          </Button>
-        </Link>
+        <div className="mx-2">
+          <UserInfo />
+          <Link href="/topics/new">
+            <Button className="mt-3 p-3 w-full" color="primary" radius="sm">
+              Create New Topic
+            </Button>
+          </Link>
+        </div>
+        <div className=" my-3">
+          <SignOutForm />
+        </div>
       </div>
       <SideProvider>
         <ShowTopicsButton />
@@ -59,9 +64,6 @@ export default async function SidePage({
           ></WindowSizeDetector>
         </div>
       </SideProvider>
-      <div className="shrink-0 px-3 pb-4 md:px-2">
-        <SignOutForm />
-      </div>
     </div>
   );
 }

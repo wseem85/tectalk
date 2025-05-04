@@ -9,7 +9,7 @@ export default function TecTalkLogo() {
       <p className="text-[44px]">
         <span>T</span>ec.<span>T</span>alk
       </p>
-      <ChatBubbleLeftRightIcon className="h-9 w-9 text-lg self-start " />
+      <ChatBubbleLeftRightIcon className="h-9 w-9 min-h-9 min-w-9 text-lg self-start " />
     </div>
   );
 }
