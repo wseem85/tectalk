@@ -7,7 +7,7 @@ import { User } from '../lib/definitions';
 export default async function UserInfo() {
   try {
     const session = await auth();
-
+    console.log(session);
     if (!session || !session.user?.email) {
       return (
         <p className="text-red-500 flex justify-center items-center min-h-20">

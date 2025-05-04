@@ -89,6 +89,7 @@ export async function createPost(
   let topicId: string;
 
   const session = await auth();
+  console.log(session);
   try {
     const res = await sql`
   SELECT id FROM topics WHERE LOWER(TRIM(title)) = ${slug.trim().toLowerCase()}
