@@ -85,7 +85,7 @@ export async function createPost(
   formData: FormData
 ) {
   // creting a new Date as a string in the form 'YYYY-MM-DD'
-  const date = new Date().toISOString();
+  // const date = new Date().toISOString();
   let topicId: string;
 
   const session = await auth();
@@ -135,8 +135,8 @@ export async function createPost(
   //insert data
   try {
     const result = await sql`
-      INSERT INTO posts (title, text, created_at, user_id, topic_id)
-      VALUES (${title}, ${text}, ${date}, ${userId}, ${topicId})
+      INSERT INTO posts (title, text, user_id, topic_id)
+      VALUES (${title}, ${text}, ${userId}, ${topicId})
       RETURNING id
     `;
     postId = result[0].id;

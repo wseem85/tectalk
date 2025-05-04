@@ -16,6 +16,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const id = (await params).postId;
   const post = await fetchPostbyId(id); // Fetch post data
+  console.log(post.created_at);
   return {
     title: `${post.title} - Post`, // Fallback if title is missing
   };
