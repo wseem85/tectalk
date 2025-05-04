@@ -8,12 +8,12 @@ export default function LocalTime({ utcDate }: { utcDate: string | Date }) {
   const [localDate, setLocalDate] = useState<Date>(new Date(utcDate));
 
   useEffect(() => {
-    // Force UTC interpretation if your input is UTC string like "2023-01-01T00:00:00Z"
-    const date = new Date(
-      utcDate + (utcDate.toString().endsWith('Z') ? '' : 'Z')
-    );
-    setLocalDate(date);
+    // Convert UTC to local time explicitly
+    const date = new Date(utcDate);
+    const offset = date.getTimezoneOffset() * 60 * 1000;
+    setLocalDate(new Date(date.getTime() - offset));
   }, [utcDate]);
+
   return (
     <span className="text-sm text-gray-500">
       {formatDistanceToNow(localDate, { addSuffix: true })}
