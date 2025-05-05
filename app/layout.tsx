@@ -3,6 +3,7 @@ import { lato } from './ui/font';
 import { Providers } from './providers';
 import { Metadata } from 'next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/next';
 export const metadata: Metadata = {
   title: {
     template: '%s | TecTalk Community',
@@ -24,6 +25,7 @@ export default function RootLayout({
           {children}
 
           <SpeedInsights />
+          <Analytics />
         </Providers>
       </body>
     </html>
