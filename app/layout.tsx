@@ -2,7 +2,7 @@ import '@/app/ui/global.css';
 import { lato } from './ui/font';
 import { Providers } from './providers';
 import { Metadata } from 'next';
-
+import { SpeedInsights } from '@vercel/speed-insights/next';
 export const metadata: Metadata = {
   title: {
     template: '%s | TecTalk Community',
@@ -20,7 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${lato.className} antialiased`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          {children}
+
+          <SpeedInsights />
+        </Providers>
       </body>
     </html>
   );
