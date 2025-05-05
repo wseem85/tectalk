@@ -9,14 +9,14 @@ export default function CreatePostButton({ slug }: { slug: string }) {
 
   return (
     <Button
-      className="mt-3 p-3 w-28"
+      className="mt-3 p-3 w-32"
       color="primary"
       radius="sm"
       onPress={() =>
-        router.push('/topics/${slug}/posts/new', { scroll: false })
+        router.push(`/topics/${slug}/posts/new`, { scroll: false })
       }
     >
-      Create New Topic
+      Create New Post
     </Button>
   );
 }
