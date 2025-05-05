@@ -23,6 +23,7 @@ export default function CreatePostForm({ slug }: { slug: string }) {
           <div className="relative mt-2 rounded-md">
             <div className="relative">
               <input
+                autoFocus
                 id="title"
                 name="title"
                 placeholder="Enter Post Title"

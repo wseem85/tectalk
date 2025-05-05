@@ -7,6 +7,7 @@ import { Metadata } from 'next';
 import { Avatar } from '@heroui/avatar';
 
 import Link from 'next/link';
+import CreatePostButton from '@/app/ui/post/create-post-button';
 export async function generateMetadata({
   params,
 }: {
@@ -59,9 +60,10 @@ export default async function TopicShowPage({ params }: TopicShowPageProps) {
         </p>
       </div>
       <div>
-        <Link href={`/topics/${slug}/posts/new`} prefetch>
+        <CreatePostButton slug={slug} />
+        {/* <Link href={`/topics/${slug}/posts/new`} prefetch>
           <Button color="primary">Create New Post</Button>
-        </Link>
+        </Link> */}
       </div>
       <div className="flex flex-col gap-2">
         <h2 className=" text-lg tracking-wider text-secondary font-bold mt-6">
