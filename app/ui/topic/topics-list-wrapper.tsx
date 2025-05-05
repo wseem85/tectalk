@@ -18,7 +18,7 @@ export default function TopicListWrapper({
   initialQuery?: string;
 }) {
   const { replace } = useRouter();
-  const pathname = usePathname();
+  // const pathname = usePathname();
   const inputRef = useRef<HTMLInputElement>(null);
   const [query, setQuery] = useState(initialQuery);
   const [topics, setTopics] = useState<TopicWithPostsCount[]>([]);
@@ -59,7 +59,7 @@ export default function TopicListWrapper({
   }, [query]);
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (isOpen && !loading && inputRef.current && !pathname.includes('new')) {
+      if (isOpen && !loading && inputRef.current) {
         inputRef.current.focus();
       }
     }, 100);

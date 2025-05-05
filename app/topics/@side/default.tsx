@@ -13,6 +13,7 @@ import WindowSizeDetector from '@/app/ui/window-size-detector';
 import { SideProvider } from '@/app/ui/side-context';
 import ShowTopicsButton from '@/app/ui/topic/show-topics-button';
 import SignOutForm from '@/app/ui/signout-form';
+import CreateTopicButton from '@/app/ui/topic/create-topic-button';
 
 export default async function SidePage({
   searchParams,
@@ -31,11 +32,8 @@ export default async function SidePage({
         </Link>
         <div className="mx-2">
           <UserInfo />
-          <Link href="/topics/new">
-            <Button className="mt-3 p-3 w-full" color="primary" radius="sm">
-              Create New Topic
-            </Button>
-          </Link>
+
+          <CreateTopicButton />
         </div>
         <div className="my-3">
           <SignOutForm />
