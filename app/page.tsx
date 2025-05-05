@@ -44,14 +44,14 @@ export default function Page() {
           <Image
             className="hidden md:block"
             alt="Screenshots of the dashboard project showing desktop version"
-            src="/hero-desktop.jpg"
+            src="/hero-desktop.avif"
             width={1000}
             height={666}
           />
           <Image
             className="block md:hidden"
             alt="Screenshots of the dashboard project showing mobile version"
-            src="/hero-mobile.jpg"
+            src="/hero-mobile.avif"
             width={560}
             height={520}
           />
